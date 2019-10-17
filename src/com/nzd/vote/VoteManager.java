@@ -42,6 +42,7 @@ public class VoteManager extends AbstractVote{
     }
 
     public void show(){
+        System.out.println(this.VoteSubject);
         int count = 1;
         for(VoteItem i:VoteItems){
             System.out.print(count);
@@ -56,7 +57,7 @@ public class VoteManager extends AbstractVote{
         scanner =  new Scanner(System.in);
         System.out.println("输入你要选择：");
         int choice = Integer.parseInt(scanner.nextLine());
-        return new VoteResult(VoteItems.get(choice));
+        return new VoteResult(VoteItems.get(choice - 1));
     }
 
     public void showResult(){

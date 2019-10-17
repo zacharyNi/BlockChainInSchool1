@@ -16,6 +16,7 @@ public class Person {
     List<VoteResult> results = new ArrayList<>();
     VoteInfoReceiver vir = null;
     VoteManager myVoteManager = null;
+    int receiveport;
     int sendPort;
     String toIP;
     int toPort;
@@ -36,6 +37,7 @@ public class Person {
     Person(int receiveport,int sendPort,String toIP,int toPort){
         sc = new Scanner(System.in);
         vir = new VoteInfoReceiver(receiveport);
+        this.receiveport = receiveport;
         this.sendPort = sendPort;
         this.toIP = toIP;
         this.toPort = toPort;
@@ -74,7 +76,7 @@ public class Person {
         }
     }
 
-       public void setVote(){
+    public void setVote(){
         //发起投票
         System.out.println("输入投票的主题");
         String Subject = sc.nextLine();
@@ -99,7 +101,7 @@ public class Person {
         VoteResult myVoteItem = myVoteManager.Voting();
         this.results.add(myVoteItem);
         //发送自己的投票结果
-        for(int i = 0;i < myVoteManager.getPopulation();i++){
+        for(int i = 0;i < myVoteManager.getPopulation() - 1;i++){//new changed
             Senders.get(i).SendMsg(myVoteItem);
         }
         //获取投票结果
@@ -108,9 +110,12 @@ public class Person {
         }
         //处理投票结果
         for(int i = 0;i < results.size();i++){
-            myVoteManager.getVoteItems().get(results.get(i).getResult().getIndex()).add();
+            myVoteManager.getVoteItems().get(results.get(i).getResult().getIndex()-1).add();//new changed
         }
         myVoteManager.showResult();
+        for(int i = 0;i < Senders.size();i++){
+            Senders.get(i).close();
+        }
     }
 
     public void inVoting(){
@@ -148,9 +153,10 @@ public class Person {
         }
         //处理投票结果
         for(int i = 0;i < results.size();i++){
-            myVoteManager.getVoteItems().get(results.get(i).getResult().getIndex()).add();
+            myVoteManager.getVoteItems().get(results.get(i).getResult().getIndex()-1).add();
         }
         myVoteManager.showResult();
+        vir.close();
     }
 
 

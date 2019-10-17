@@ -48,7 +48,11 @@ public class VoteInfoReceiver {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ds.close();
+
         return av;
+    }
+
+    public void close(){
+        ds.close();
     }
 }

@@ -39,7 +39,7 @@ public class TalkReceiver implements Runnable{
                 break;
             }
         }
-        ds.close();
+
     }
 
 

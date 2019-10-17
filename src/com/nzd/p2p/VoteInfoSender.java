@@ -54,8 +54,12 @@ public class VoteInfoSender {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            //关流
-            ds.close();}
+           }
+
+            public void close(){
+                //关流
+                ds.close();
+            }
 
 }
 
