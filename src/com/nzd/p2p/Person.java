@@ -162,6 +162,7 @@ public class Person {
 
 
     public void Voting(){
+        //稍微改了改
         AbstractVote abstractVote = vir.ReceiveMsg();
         if(abstractVote instanceof VoteManager){
             if(this.myVoteManager != null){
