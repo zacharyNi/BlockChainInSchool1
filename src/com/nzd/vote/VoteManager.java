@@ -10,9 +10,8 @@ import java.util.Scanner;
 /**
  * 用于存放投票信息
  */
-public class VoteManager extends AbstractVote{
+public class VoteManager extends AbstractVote {
     String VoteSubject;
-    transient Scanner scanner;
     List<VoteItem> VoteItems = new ArrayList<VoteItem>();
     int population;//参与投票的人数
 
@@ -54,13 +53,14 @@ public class VoteManager extends AbstractVote{
 
     public VoteResult Voting(){
         this.show();
-        scanner =  new Scanner(System.in);
+        Scanner scanner =  new Scanner(System.in);
         System.out.println("输入你要选择：");
         int choice = Integer.parseInt(scanner.nextLine());
         return new VoteResult(VoteItems.get(choice - 1));
     }
 
     public void showResult(){
+        System.out.println(this.VoteSubject);
         for(VoteItem i:VoteItems){
             System.out.print(i.getIndex());
             System.out.print('.');
@@ -70,5 +70,9 @@ public class VoteManager extends AbstractVote{
         }
     }
 
+    @Override
+    public String toString() {
+        return  "VoteManager[VoteSubject="+VoteSubject+",VoteItems="+VoteItems+",population="+population+"]";
+    }
 }
 

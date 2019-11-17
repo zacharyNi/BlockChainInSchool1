@@ -1,5 +1,8 @@
 package com.nzd.p2p;
 
+import com.nzd.Blocks.Block;
+import com.nzd.Blocks.BlockChain;
+import com.nzd.Utils.IOUtils;
 import com.nzd.vote.AbstractVote;
 import com.nzd.vote.VoteItem;
 import com.nzd.vote.VoteManager;
@@ -10,10 +13,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/*
+* VERSION 1:
+* 1.通信双方只能一收一发，不能边收边发
+* */
+
 public class Person {
     Scanner sc;
     List<VoteInfoSender> Senders = new ArrayList<VoteInfoSender>();
     List<VoteResult> results = new ArrayList<>();
+    BlockChain previousResult;//登录前读取先前保存的投票记录
     VoteInfoReceiver vir = null;
     VoteManager myVoteManager = null;
     int receiveport;
@@ -25,13 +34,15 @@ public class Person {
         System.out.println("1.比赛组队");
         System.out.println("2.记账");
         System.out.println("3.投票");
-        System.out.println("4.quit");
+        System.out.println("4.加好友");
+        System.out.println("5.quit");
     }
 
     public void VoteMenu(){
         System.out.println("1.发起投票");
         System.out.println("2.参与投票");
-        System.out.println("3.quit");
+        System.out.println("3.查看历史投票记录");
+        System.out.println("4.quit");
     }
 
     Person(int receiveport,int sendPort,String toIP,int toPort){
@@ -53,7 +64,8 @@ public class Person {
                 case 1:break;
                 case 2:break;
                 case 3:this.vote();break;
-                case 4:return;
+                case 4:this.addFriends();break;
+                case 5:break;
                 default:break;
             }
         }
@@ -61,6 +73,8 @@ public class Person {
 
     public void vote(){
         //VERSION 1:只能选择参与投票或者发起投票
+        //读取先前的投票纪录
+        this.previousResult = IOUtils.ReadVoteInfo();
         this.VoteMenu();
         System.out.println("输入你想使用的功能");
         sc = new Scanner(System.in);
@@ -70,7 +84,7 @@ public class Person {
             switch (choice){
                 case 1:this.setVote();break;
                 case 2:this.inVoting();break;
-                case 3:return;
+                case 3:this.readVoteResult();break;
                 default:break;
             }
         }
@@ -92,7 +106,7 @@ public class Person {
             myVoteManager.addVoteItems(new VoteItem(i+1,info));
         }
         //网络传输 sender
-        //m目前只能两个人投票。。
+        //目前只能两个人投票。。
         Senders.add(new VoteInfoSender(sendPort,toIP,toPort));
         for(int i = 0;i < Senders.size();i++){
             Senders.get(i).SendMsg(myVoteManager);
@@ -116,6 +130,9 @@ public class Person {
         for(int i = 0;i < Senders.size();i++){
             Senders.get(i).close();
         }
+        //保存投票结果
+        previousResult.addBlock(new Block(myVoteManager,previousResult.getPreviousBlock().getHash()));
+        IOUtils.SaveVoteInfo(previousResult);
     }
 
     public void inVoting(){
@@ -162,7 +179,6 @@ public class Person {
 
 
     public void Voting(){
-        //稍微改了改
         AbstractVote abstractVote = vir.ReceiveMsg();
         if(abstractVote instanceof VoteManager){
             if(this.myVoteManager != null){
@@ -181,6 +197,14 @@ public class Person {
         }else{
             return;
         }
+    }
+
+    public void readVoteResult(){
+        previousResult.showAllInfo();
+    }
+
+    public void addFriends(){
+        //..未完待续
     }
 
 }

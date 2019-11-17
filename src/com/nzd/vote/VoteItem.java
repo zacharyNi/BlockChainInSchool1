@@ -4,6 +4,7 @@ package com.nzd.vote;
 import java.io.Serializable;
 
 public class VoteItem implements Serializable {
+    private static final long serialVersionUID = 1892144704209866876L;
     int index;
     String Vote_Info;
     int num;//票数
